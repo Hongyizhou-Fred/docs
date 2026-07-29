@@ -119,6 +119,7 @@ export default defineConfig({
   // UnoCSS 静态扫描无法发现它们，必须显式 safelist 出来。
   // 与 config.mts:CATEGORY_ICONS 保持同步。
   safelist: [
+    // HK / SG business slug icons
     'i-ph-book',
     'i-ph-rocket',
     'i-ph-device-mobile-speaker',
@@ -137,6 +138,9 @@ export default defineConfig({
     'i-ph-gift',
     'i-ph-shield-check',
     'i-ph-bug',
+    // US Zendesk-native slug icons (only names not shared with HK/SG above)
+    'i-ph-user-plus',
+    'i-ph-users',
   ],
   extractors: [extractorMdc()],
   transformers: [

@@ -19,6 +19,7 @@ const zhHK = {
     selectLanguage: '選擇語言',
     regionHK: '中國香港',
     regionSG: '新加坡',
+    regionUS: '美國',
     apiSdk: 'API 與 SDK',
   },
   brand: {
@@ -307,6 +308,10 @@ const zhHK = {
       'funds-and-wealth': '基金與 ETF',
       'compliance-and-tax': '合規監管',
       'market-data': '量化與數據',
+      // US 專用
+      funding: '入金與提取',
+      account: '賬戶與安全',
+      about: '關於長橋',
     },
     categoryGroups: {
       trading: '交易類',

@@ -7,6 +7,17 @@ docs/.vitepress/cache
 CLAUDE.md
 .DS_Store
 scripts/*
+!scripts/*.ts
+!scripts/zendesk
+!scripts/zendesk/**
+
+# Zendesk 结构 dump / debug 产物,不入库
+us-zendesk-dump.json
+zendesk-*-dump.json
+
+# US zh-HK 目前是 en 的纯 mirror(Zendesk 无 zh-cn/tw 内容),transient,不入库
+# 待 S2 拉到真实 zh-tw 内容并映射进来后再移除这行
+docs/us/zh-HK/
 .playwright-mcp
 graphrag_quickstart
 .superpowers/

@@ -10,7 +10,7 @@ export interface BreadcrumbItem {
   link?: string
 }
 
-const REGION_PREFIX_RE = /^\/(hk|sg)(?=\/|$)/
+const REGION_PREFIX_RE = /^\/(hk|sg|us)(?=\/|$)/
 const LOCALE_PREFIX_RE = /^\/(zh-CN|zh-HK)(?=\/|$)/
 
 // 同时剥掉 region 和 locale 前缀 —— 它们不属于文章层级

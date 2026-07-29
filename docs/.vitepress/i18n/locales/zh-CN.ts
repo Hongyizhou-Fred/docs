@@ -18,6 +18,7 @@ const zhCN = {
     selectLanguage: '选择语言',
     regionHK: '中国香港',
     regionSG: '新加坡',
+    regionUS: '美国',
     apiSdk: 'API 和 SDK',
   },
   brand: {
@@ -396,6 +397,10 @@ const zhCN = {
       'funds-and-wealth': '基金与 ETF',
       'compliance-and-tax': '合规监管',
       'market-data': '量化与数据',
+      // US 专用
+      funding: '入金与提取',
+      account: '账户与安全',
+      about: '关于长桥',
     },
     categoryGroups: {
       trading: '交易类',

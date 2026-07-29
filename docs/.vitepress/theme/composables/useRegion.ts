@@ -9,6 +9,11 @@ const REGION_ARTICLES: Record<string, Set<string>> = Object.fromEntries(
     .map(([k, v]) => [k, new Set(v)]),
 )
 
+export type Region = 'hk' | 'sg' | 'us'
+const REGIONS: readonly Region[] = ['hk', 'sg', 'us'] as const
+const REGION_URL_RE = /^\/(hk|sg|us)(\/|$)/
+const isRegion = (v: string): v is Region => (REGIONS as readonly string[]).includes(v)
+
 // region 优先级：URL 第一段 > cookie > 'hk' 默认。
 // 单 VitePress 实例下 base=/，region 完全由 URL 路径段决定。
 // 用 computed 读 useRoute().path 让 region 跟随 SPA 导航实时更新，避免在
@@ -17,12 +22,12 @@ export function useRegion() {
   const route = useRoute()
   const { lang } = useData()
 
-  const region = computed<'hk' | 'sg'>(() => {
-    const p = route.path.match(/^\/(hk|sg)(\/|$)/)
-    if (p) return p[1] as 'hk' | 'sg'
+  const region = computed<Region>(() => {
+    const p = route.path.match(REGION_URL_RE)
+    if (p) return p[1] as Region
     if (inBrowser) {
       const m = document.cookie.match(/(?:^|; )region=([^;]*)/)
-      if (m && (m[1] === 'sg' || m[1] === 'hk')) return m[1] as 'hk' | 'sg'
+      if (m && isRegion(m[1])) return m[1]
     }
     return 'hk'
   })
@@ -46,7 +51,7 @@ export function useRegion() {
     if (/^https?:\/\//.test(href) || href.startsWith('mailto:') || href.startsWith('#')) return href
     if (!href.startsWith('/')) return href
     // strip 已有 region + locale 前缀，保证 idempotent
-    let bare = href.replace(/^\/(hk|sg)(\/(zh-CN|zh-HK))?/, '')
+    let bare = href.replace(/^\/(hk|sg|us)(\/(zh-CN|zh-HK))?/, '')
     if (!bare.startsWith('/')) bare = '/' + bare
     if (bare !== '/' && bare.endsWith('/')) bare = `${bare}overview`
     const localeSegment = lang.value === 'en' ? '' : `/${lang.value}`
@@ -54,7 +59,7 @@ export function useRegion() {
   }
 
   // 跨 region：构造目标 region 的绝对 URL（忽略当前 region/locale）
-  function toRegion(target: 'hk' | 'sg', pathWithinRegion = '/'): string {
+  function toRegion(target: Region, pathWithinRegion = '/'): string {
     const rest = pathWithinRegion.startsWith('/') ? pathWithinRegion : '/' + pathWithinRegion
     return `/${target}${rest === '/' ? '/' : rest}`
   }
@@ -72,7 +77,7 @@ export function useRegion() {
     if (!href.startsWith('/')) return true
     const articles = REGION_ARTICLES[region.value]
     if (!articles || articles.size === 0) return true
-    let bare = href.replace(/^\/(hk|sg)(\/(zh-CN|zh-HK))?/, '')
+    let bare = href.replace(/^\/(hk|sg|us)(\/(zh-CN|zh-HK))?/, '')
     if (bare !== '/' && bare.endsWith('/')) bare = `${bare}overview`
     if (!bare.startsWith('/')) bare = '/' + bare
     return articles.has(bare)

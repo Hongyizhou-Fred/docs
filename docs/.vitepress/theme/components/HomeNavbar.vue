@@ -10,7 +10,7 @@ import {
   PhGithubLogo as Github,
   PhCaretDown as ChevronDown,
 } from '@phosphor-icons/vue'
-import { NAV_TABS } from '../../../.vitepress/tabs.config'
+import { NAV_TABS_BY_REGION, type NavTab } from '../../../.vitepress/tabs.config'
 
 // 由 config.mts 通过 vite define 注入：每 region 实际存在的顶级分类目录列表
 declare const __LB_REGION_CATEGORIES__: Record<string, string[]>
@@ -47,6 +47,7 @@ function toggleApi() { apiOpen.value = !apiOpen.value }
 const REGIONS = [
   { code: 'hk', labelKey: 'common.regionHK'},
   { code: 'sg', labelKey: 'common.regionSG' },
+  { code: 'us', labelKey: 'common.regionUS' },
 ]
 
 const LANGS = [
@@ -90,7 +91,7 @@ function switchRegion(target: typeof REGIONS[number]) {
   // SPA 切 region：把 URL 第一段 region 换掉，保留 locale + 剩余路径，
   // 然后 router.go 走 VitePress 内部导航（替代以前的全页刷新）
   const p = window.location.pathname
-  const next = p.replace(/^\/(hk|sg)(?=\/|$)/, `/${target.code}`)
+  const next = p.replace(/^\/(hk|sg|us)(?=\/|$)/, `/${target.code}`)
   const targetUrl = next === p ? `/${target.code}/` : next
   router.go(targetUrl)
   langOpen.value = false
@@ -100,7 +101,7 @@ const currentLang = computed(() => {
   const p = route.path
   // URL 形如 /<region>/<locale>(/...)?；与 currentRegion 对齐，
   // 允许 /hk/zh-CN 这类语言根 URL（无尾斜杠）也命中
-  const m = p.match(/^\/(hk|sg)\/(zh-CN|zh-HK)(\/|$)/)
+  const m = p.match(/^\/(hk|sg|us)\/(zh-CN|zh-HK)(\/|$)/)
   if (m) return m[2]
   return 'en'
 })
@@ -114,20 +115,23 @@ function switchLang(target: typeof LANGS[number]) {
   const r = region.value
   // 剥掉当前 region + locale 前缀，得到 region 内剩余路径
   const p = route.path
-  let rest = p.replace(/^\/(hk|sg)(\/(zh-CN|zh-HK))?/, '')
+  let rest = p.replace(/^\/(hk|sg|us)(\/(zh-CN|zh-HK))?/, '')
   if (!rest.startsWith('/')) rest = '/' + rest
   // 目标 locale 在该 region 下的前缀（按 LANGS.link 推断，默认语言 en 不带 locale 段）
   const langSegment = target.code === 'en' ? '' : `/${target.code}`
   router.go(`/${r}${langSegment}${rest === '/' ? '/' : rest}`)
 }
 
+// tabs 按 region 拆开;HK/SG 共用,US 用 Zendesk 分类 slug 归并出的一套。
+const navTabs = computed<NavTab[]>(() => NAV_TABS_BY_REGION[region.value] ?? NAV_TABS_BY_REGION.hk)
+
 const activeTab = computed(() => {
   // 剥掉 URL 中的 region/locale 前缀（如 /hk/、/hk/zh-CN/、/hk/zh-HK/），
-  // 再按 NAV_TABS 配置的相对 path 匹配
-  let p = route.path.replace(/^\/(hk|sg)(\/(zh-CN|zh-HK))?/, '') || '/'
+  // 再按当前 region 的 NAV_TABS 配置匹配相对 path
+  let p = route.path.replace(/^\/(hk|sg|us)(\/(zh-CN|zh-HK))?/, '') || '/'
   if (!p.startsWith('/')) p = '/' + p
   // 先做非 home 匹配；home 用 categories=[] 兜底，避免它把所有 / 开头路径都吞掉
-  const tab = NAV_TABS.find(t =>
+  const tab = navTabs.value.find(t =>
     t.path !== '/' && (p === t.path || t.categories.some(c => p.startsWith('/' + c + '/')))
   )
   if (tab) return tab.path
@@ -138,11 +142,11 @@ const activeTab = computed(() => {
 // 当前 region 下实际有内容的 tab 才显示；Home（path '/'）始终保留。
 // tab.path 指向的主分类在 region 里可能不存在（例如 sg 没 getting-started），
 // 此时回退到该 tab.categories 里第一个实际存在的分类的 overview，避免 404。
-type VisibleTab = (typeof NAV_TABS)[number] & { landingHref: string }
+type VisibleTab = NavTab & { landingHref: string }
 const visibleNavTabs = computed<VisibleTab[]>(() => {
   const cats = new Set(REGION_CATEGORIES[region.value] ?? [])
   const out: VisibleTab[] = []
-  for (const t of NAV_TABS) {
+  for (const t of navTabs.value) {
     if (t.path === '/') {
       out.push({ ...t, landingHref: '/' })
       continue
