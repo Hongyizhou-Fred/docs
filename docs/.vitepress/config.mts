@@ -6,23 +6,45 @@ import UnoCSS from 'unocss/vite'
 import { tipContainerPlugin } from './md-plugins/tip-container'
 import { normalizeMdPlugin } from './md-plugins/normalize-md'
 import { buildEndCdnPrefix } from './cdn-prefix'
-import { NAV_TABS } from './tabs.config'
+import { NAV_TABS_BY_REGION } from './tabs.config'
 import zhCN from './i18n/locales/zh-CN'
 import en from './i18n/locales/en'
 import zhHK from './i18n/locales/zh-HK'
 
 const __dirname = fileURLToPath(new URL('.', import.meta.url))
 
-// 单 VitePress 实例同时服务 /hk/* 与 /sg/*。zh-CN 是各 region 的内容主源，
-// 缺 en / zh-HK 目录时启动期自动从 zh-CN 物理镜像（避免 rewrites 失配 + 默认
-// locale 找不到 index.md）。
-const REGION_ALL = ['hk', 'sg'] as const
-const LOCALES = ['en', 'zh-CN', 'zh-HK'] as const
+// 单 VitePress 实例同时服务 /hk/* /sg/* /us/*。每个 region 的「内容主源」
+// locale 由 REGION_SOURCE_LOCALE 定义:HK/SG 用中文写、翻译到英文,US 用英文
+// 写、翻译到繁中。缺目标 locale 目录时启动期自动从主源物理镜像(避免 rewrites
+// 失配 + 默认 locale 找不到 index.md)。
+const REGION_ALL = ['hk', 'sg', 'us'] as const
+type Region = typeof REGION_ALL[number]
+
+// 每个 region 的可用 locale 列表。US 目前只有英文和繁中(Zendesk 未启用简中);
+// 首位是「内容主源」,同时也是 URL 上省略 locale 段的默认 locale。
+const REGION_LOCALES: Record<Region, string[]> = {
+  hk: ['zh-CN', 'en', 'zh-HK'],
+  sg: ['zh-CN', 'en', 'zh-HK'],
+  us: ['en', 'zh-HK'],
+}
+// 内容主源 locale(mirror 的源、sidebar 目录扫描的源、closeBundle 的源)。
+const REGION_SOURCE_LOCALE: Record<Region, string> = {
+  hk: 'zh-CN',
+  sg: 'zh-CN',
+  us: 'en',
+}
+// URL 上作为「无 locale 段默认」的 locale。三个 region 目前都是 en。
+const REGION_DEFAULT_URL_LOCALE: Record<Region, string> = {
+  hk: 'en',
+  sg: 'en',
+  us: 'en',
+}
 
 function mirrorMissingLocales() {
   for (const region of REGION_ALL) {
     const root = path.resolve(`./docs/${region}`)
-    const src = path.join(root, 'zh-CN')
+    const source = REGION_SOURCE_LOCALE[region]
+    const src = path.join(root, source)
     if (!fs.existsSync(src)) continue
     function copyRecursive(s: string, d: string) {
       fs.mkdirSync(d, { recursive: true })
@@ -34,11 +56,12 @@ function mirrorMissingLocales() {
         else fs.copyFileSync(sp, dp)
       }
     }
-    for (const target of ['en', 'zh-HK']) {
+    for (const target of REGION_LOCALES[region]) {
+      if (target === source) continue
       const dst = path.join(root, target)
       if (!fs.existsSync(dst)) {
         copyRecursive(src, dst)
-        console.log(`[config] auto-mirrored ${region}/zh-CN → ${region}/${target}`)
+        console.log(`[config] auto-mirrored ${region}/${source} → ${region}/${target}`)
       }
     }
   }
@@ -63,10 +86,12 @@ function rawMarkdownPlugin(): Plugin {
         //   /hk/foo.md                → docs/hk/en/foo.md（en 默认无 locale 段）
         //   /hk/zh-CN/foo.md          → docs/hk/zh-CN/foo.md
         //   /sg/zh-HK/account/foo.md  → docs/sg/zh-HK/account/foo.md
-        const m = url.match(/^\/(hk|sg)(?:\/(zh-CN|zh-HK))?(\/.*)$/)
+        //   /us/foo.md                → docs/us/en/foo.md
+        const regionAlt = REGION_ALL.join('|')
+        const m = url.match(new RegExp(`^\\/(${regionAlt})(?:\\/(zh-CN|zh-HK))?(\\/.*)$`))
         if (!m) return next()
-        const region = m[1]
-        const locale = m[2] || 'en'
+        const region = m[1] as Region
+        const locale = m[2] || REGION_DEFAULT_URL_LOCALE[region]
         const rest = m[3]
         const filePath = path.join('docs', region, locale, rest)
         if (fs.existsSync(filePath)) {
@@ -99,15 +124,16 @@ function rawMarkdownPlugin(): Plugin {
         }
       }
 
-      // 单 dist 内同时含两个 region：
-      //   docs/<region>/en/*     → dist/<region>/*
-      //   docs/<region>/zh-CN/*  → dist/<region>/zh-CN/*
-      //   docs/<region>/zh-HK/*  → dist/<region>/zh-HK/*
+      // 单 dist 内同时含所有 region:
+      //   docs/<region>/<default>/*  → dist/<region>/*                 (default 无 locale 段)
+      //   docs/<region>/<locale>/*   → dist/<region>/<locale>/*        (其它 locale)
       for (const region of REGION_ALL) {
         const srcRoot = path.resolve(`docs/${region}`)
-        copyMdFiles(path.join(srcRoot, 'en'), `/${region}`)
-        copyMdFiles(path.join(srcRoot, 'zh-CN'), `/${region}/zh-CN`)
-        copyMdFiles(path.join(srcRoot, 'zh-HK'), `/${region}/zh-HK`)
+        const defaultLocale = REGION_DEFAULT_URL_LOCALE[region]
+        for (const locale of REGION_LOCALES[region]) {
+          const urlBase = locale === defaultLocale ? `/${region}` : `/${region}/${locale}`
+          copyMdFiles(path.join(srcRoot, locale), urlBase)
+        }
       }
     },
   }
@@ -119,13 +145,23 @@ function extractTitle(filePath: string, fallback: string): string {
     const content = fs.readFileSync(filePath, 'utf-8')
     const fmMatch = content.match(/^---\s*\n([\s\S]*?)\n---/)
     if (fmMatch) {
-      const titleMatch = fmMatch[1].match(/^title:\s*(.+)$/m)
+      const titleMatch = fmMatch[1].match(/^title:\s*['"]?(.+?)['"]?$/m)
       if (titleMatch) return titleMatch[1].trim()
     }
     const h1Match = content.match(/^#\s+(.+)$/m)
     if (h1Match) return h1Match[1].trim()
   } catch { }
   return fallback
+}
+
+// 取目录展示名:i18n dirNames > overview.md 的 title > 原始 slug。
+// US 走 Zendesk 分类:name 直接由 overview.md frontmatter 提供,不需要在 dirNames
+// 维护 slug → 中文/英文对照,天然多语一致。
+function resolveDirDisplayName(dirPath: string, slug: string, dirNames: Record<string, string>): string {
+  if (dirNames[slug]) return dirNames[slug]
+  const overview = path.join(dirPath, 'overview.md')
+  if (fs.existsSync(overview)) return extractTitle(overview, slug)
+  return slug
 }
 
 // 跳过的目录（语言子目录 + 文档中心入口目录）
@@ -168,7 +204,7 @@ function generateSidebarItemsFromDir(dir: string, base: string, dirNames: Record
 
       if (stat.isDirectory()) {
         const subItems = generateSidebarItemsFromDir(fullPath, `${base}/${entry}`, dirNames, depth + 1)
-        const displayName = dirNames[entry] || entry
+        const displayName = resolveDirDisplayName(fullPath, entry, dirNames)
 
         // 若目录下有 overview.md，把 group 标题本身做成 overview link：
         // 点击 group 文字 → 展开 + 跳转 overview（Layout.vue 全局拦截补 caret 触发）。
@@ -207,7 +243,9 @@ function generateSidebarItemsFromDir(dir: string, base: string, dirNames: Record
 
 // 顶级分类 icon 字典(对齐 docs.cdp.coinbase.com 风格)
 // 使用 Phosphor icon 名,经 UnoCSS preset-icons 渲染为 `<span class="i-ph-XXX">` 的 CSS mask SVG
+// HK/SG 使用业务 slug,US 使用 Zendesk category slugify(见 tabs.config.NAV_TABS_US)。
 const CATEGORY_ICONS: Record<string, string> = {
+  // HK / SG
   'getting-started':           'book',
   'app-guide':                 'device-mobile-speaker',
   'account':                   'identification-card',
@@ -225,33 +263,23 @@ const CATEGORY_ICONS: Record<string, string> = {
   'rewards':                   'gift',
   'compliance-and-tax':        'shield-check',
   'troubleshooting':           'bug',
+
+  // US(Zendesk category slug)
+  'opening-an-account':                                  'user-plus',
+  'trading-and-investing':                               'chart-line-up',
+  'funding-your-account-withdrawals-and-transfer':       'hand-deposit',
+  'account-and-security':                                'shield-check',
+  'longbridge-community':                                'users',
+  'campaigns':                                           'gift',
 }
 
-// 分类展示顺序（文档中心侧边栏按此顺序排列）
-const categoryOrder = [
-  'getting-started',
-  'app-guide',
-  'account',
-  'deposit',
-  'withdrawal',
-  'transfers-and-fx',
-  'troubleshooting',
-  'stock-trading',
-  'derivatives',
-  'crypto',
-  'ipo',
-  'margin',
-  'funds-and-wealth',
-  'market-data',
-  'portfolio-and-statements',
-  'rewards',
-  'compliance-and-tax',
-]
-
-// 生成侧边栏配置：从指定 region 的 zh-CN 读目录结构（zh-CN 是内容主源），按
-// urlPrefix 给 link/key 加前缀。urlPrefix 形如 `/hk`、`/hk/zh-CN`、`/sg/zh-HK` 等。
-function generateSidebar(region: string, dirNames: Record<string, string>, urlPrefix: string) {
-  const contentRoot = `./docs/${region}/zh-CN`
+// 生成侧边栏配置：从指定 region 的「内容主源 locale」读目录结构,按 urlPrefix 给
+// link/key 加前缀。urlPrefix 形如 `/hk`、`/hk/zh-CN`、`/us/zh-HK` 等。
+// HK/SG 主源是 zh-CN,US 主源是 en(见 REGION_SOURCE_LOCALE)。
+// NAV_TABS 走 per-region:HK/SG 共用一套业务 tab,US 用 Zendesk 分类 slug 手工归并。
+function generateSidebar(region: Region, dirNames: Record<string, string>, urlPrefix: string) {
+  const contentRoot = `./docs/${region}/${REGION_SOURCE_LOCALE[region]}`
+  const navTabs = NAV_TABS_BY_REGION[region]
 
   const topDirs = (() => {
     try {
@@ -265,17 +293,23 @@ function generateSidebar(region: string, dirNames: Record<string, string>, urlPr
     } catch { return [] }
   })()
 
-  // 构建每个分类目录的 sidebar item
+  // 构建每个分类目录的 sidebar item。已知分类白名单来自当前 region 的 navTabs
+  // (HK/SG 一套业务 slug,US 一套 Zendesk slug);未在 navTabs 出现的目录视为
+  // "野生分类"(可能是 Zendesk 新加但未映射),打印警告后跳过 sidebar 挂载。
+  const knownCategories = new Set(navTabs.flatMap(t => t.categories))
   const itemByCategory: Record<string, object> = {}
-  for (const dir of categoryOrder) {
-    if (!topDirs.includes(dir)) continue
+  for (const dir of topDirs) {
+    if (!knownCategories.has(dir)) {
+      console.warn(`[config] ${region}/${dir}: 目录存在但未在 NAV_TABS_${region.toUpperCase()} 里挂载, sidebar 会缺失。请检查 tabs.config.ts。`)
+      continue
+    }
     const dirPath = path.join(contentRoot, dir)
     const items = generateSidebarItemsFromDir(dirPath, `${urlPrefix}/${dir}`, dirNames)
     const iconName = CATEGORY_ICONS[dir]
     const iconHtml = iconName
       ? `<span class="sidebar-group-icon i-ph-${iconName}" aria-hidden="true"></span>`
       : ''
-    const label = dirNames[dir] || dir
+    const label = resolveDirDisplayName(dirPath, dir, dirNames)
     // 顶级分类目录如果有 overview.md，也让标题可点
     const overviewPath = path.join(dirPath, 'overview.md')
     const overviewLink = fs.existsSync(overviewPath)
@@ -294,7 +328,7 @@ function generateSidebar(region: string, dirNames: Record<string, string>, urlPr
   // 跳过 home（path '/'）：把 '/' 写进 sidebar 会被 VitePress 当作所有路径的兜底，
   // 让具体业务路径匹配不到自己的 sidebar，面包屑也因此推不出层级
   const sidebar: Record<string, object[]> = {}
-  for (const tab of NAV_TABS) {
+  for (const tab of navTabs) {
     if (tab.path === '/') continue
     sidebar[`${urlPrefix}${tab.path}`] = tab.categories
       .filter(cat => itemByCategory[cat])
@@ -302,7 +336,7 @@ function generateSidebar(region: string, dirNames: Record<string, string>, urlPr
   }
 
   // 补齐各分类自身的路径前缀
-  for (const tab of NAV_TABS) {
+  for (const tab of navTabs) {
     if (tab.path === '/') continue
     for (const cat of tab.categories) {
       const catPath = `${urlPrefix}/${cat}/`
@@ -315,27 +349,29 @@ function generateSidebar(region: string, dirNames: Record<string, string>, urlPr
   return sidebar
 }
 
-// 6 套 sidebar：两个 region × 三个 locale
-// dirNames 各 locale 独立来源；缺 key 时回退 zh-CN（en/zh-HK 翻译未完成的 token）
+// sidebar 数量 = 每个 region 的 (locale 数)。US 只有 en + zh-HK,所以少一套 zh-CN。
+// dirNames 各 locale 独立来源;缺 key 时回退 zh-CN(en/zh-HK 翻译未完成的 token)
 const mergedEnDirNames = { ...zhCN.data.dirNames, ...en.data.dirNames }
 const mergedZhHKDirNames = { ...zhCN.data.dirNames, ...zhHK.data.dirNames }
 
-// root locale（en，URL 不带 locale 段）：包含 /hk/* 与 /sg/* 的 en sidebar
+// root locale(en,URL 不带 locale 段):合并所有 region 的 en sidebar
 const sidebarRoot = {
   ...generateSidebar('hk', mergedEnDirNames, '/hk'),
   ...generateSidebar('sg', mergedEnDirNames, '/sg'),
+  ...generateSidebar('us', mergedEnDirNames, '/us'),
 }
 // 非默认 locale 合并到对应 locale.themeConfig.sidebar 里
 const sidebarHkZhCN = generateSidebar('hk', zhCN.data.dirNames, '/hk/zh-CN')
 const sidebarSgZhCN = generateSidebar('sg', zhCN.data.dirNames, '/sg/zh-CN')
 const sidebarHkZhHK = generateSidebar('hk', mergedZhHKDirNames, '/hk/zh-HK')
 const sidebarSgZhHK = generateSidebar('sg', mergedZhHKDirNames, '/sg/zh-HK')
+const sidebarUsZhHK = generateSidebar('us', mergedZhHKDirNames, '/us/zh-HK')
 
 // 每个 region 实际存在的顶级分类目录。HomeNavbar 据此过滤 NAV_TABS，避免
 // 显示 sg 没有的 derivatives / crypto / compliance 等 sub-tab（点了会 404）
 const regionCategories: Record<string, string[]> = {}
 for (const region of REGION_ALL) {
-  const root = `./docs/${region}/zh-CN`
+  const root = `./docs/${region}/${REGION_SOURCE_LOCALE[region]}`
   try {
     regionCategories[region] = fs.readdirSync(root)
       .filter(e => !skipDirs.has(e) && !e.startsWith('.') && fs.statSync(path.join(root, e)).isDirectory())
@@ -361,7 +397,7 @@ function collectArticles(dir: string, prefix: string, acc: string[]) {
 }
 for (const region of REGION_ALL) {
   const acc: string[] = []
-  collectArticles(`./docs/${region}/zh-CN`, '', acc)
+  collectArticles(`./docs/${region}/${REGION_SOURCE_LOCALE[region]}`, '', acc)
   regionArticles[region] = acc
 }
 
@@ -403,10 +439,12 @@ export default defineConfig({
   rewrites: {
     'hk/en/:path*': 'hk/:path*',
     'sg/en/:path*': 'sg/:path*',
+    'us/en/:path*': 'us/:path*',
   },
 
-  // 5 个 locale：root（en，匹配 /hk/* /sg/* 中不在子 locale 下的 URL）+ 4 个
-  // region+lang 组合多段 key。VitePress 按 URL 最长前缀匹配解析当前 locale。
+  // 6 个 locale：root（en，匹配 /hk/* /sg/* /us/* 中不在子 locale 下的 URL）+ 5
+  // 个 region+lang 组合多段 key(hk/zh-CN、hk/zh-HK、sg/zh-CN、sg/zh-HK、us/zh-HK)。
+  // US 只启用 en + zh-HK,没有 us/zh-CN 条目。VitePress 按 URL 最长前缀匹配解析当前 locale。
   locales: {
     root: {
       label: 'English',
@@ -504,6 +542,28 @@ export default defineConfig({
       themeConfig: {
         nav: sharedNav,
         sidebar: sidebarSgZhHK,
+        outline: { level: [2, 4], label: '本頁內容' },
+        lastUpdated: { text: '最近更新', formatOptions: { dateStyle: 'medium' } },
+        editLink: { pattern: editLinkPattern, text: '在 GitHub 上編輯此頁' },
+        docFooter: { prev: '上一篇', next: '下一篇' },
+        footer: { message: '© 2026 Longbridge. All rights reserved.' },
+        sidebarMenuLabel: '選單',
+        returnToTopLabel: '返回頂部',
+        darkModeSwitchLabel: '切換深色模式',
+        lightModeSwitchTitle: '切換淺色模式',
+        darkModeSwitchTitle: '切換深色模式',
+        skipToContentLabel: '跳至內容',
+      },
+    },
+    'us/zh-HK': {
+      label: '繁體中文',
+      lang: 'zh-HK',
+      link: '/us/zh-HK/',
+      title: 'Longbridge Docs',
+      description: 'Longbridge Docs',
+      themeConfig: {
+        nav: sharedNav,
+        sidebar: sidebarUsZhHK,
         outline: { level: [2, 4], label: '本頁內容' },
         lastUpdated: { text: '最近更新', formatOptions: { dateStyle: 'medium' } },
         editLink: { pattern: editLinkPattern, text: '在 GitHub 上編輯此頁' },

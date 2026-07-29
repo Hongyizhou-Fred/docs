@@ -75,12 +75,12 @@ if (inBrowser) {
     const href = link.getAttribute('href')
     if (!href || !href.startsWith('/') || href.startsWith('//')) return
     // 从当前 URL 推断 region + locale
-    const m = location.pathname.match(/^\/(hk|sg)(?:\/(zh-CN|zh-HK))?/)
+    const m = location.pathname.match(/^\/(hk|sg|us)(?:\/(zh-CN|zh-HK))?/)
     if (!m) return
     const regionSeg = `/${m[1]}`
     const localeSeg = m[2] ? `/${m[2]}` : ''
     // strip 已有的 region + locale 前缀（幂等）
-    let bare = href.replace(/^\/(hk|sg)(\/(zh-CN|zh-HK))?/, '')
+    let bare = href.replace(/^\/(hk|sg|us)(\/(zh-CN|zh-HK))?/, '')
     if (!bare.startsWith('/')) bare = '/' + bare
     // 目录类（/foo/）补 overview
     if (bare !== '/' && bare.endsWith('/')) bare = `${bare}overview`

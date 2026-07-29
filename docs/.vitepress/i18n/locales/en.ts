@@ -19,6 +19,7 @@ const en = {
     selectLanguage: 'Select language',
     regionHK: 'Hong Kong',
     regionSG: 'Singapore',
+    regionUS: 'United States',
     apiSdk: 'API & SDK',
   },
   brand: {
@@ -307,6 +308,10 @@ const en = {
       'funds-and-wealth': 'Funds & ETF',
       'compliance-and-tax': 'Compliance',
       'market-data': 'Data',
+      // US-only
+      funding: 'Funding',
+      account: 'Account',
+      about: 'About',
     },
     categoryGroups: {
       trading: 'Trading',
