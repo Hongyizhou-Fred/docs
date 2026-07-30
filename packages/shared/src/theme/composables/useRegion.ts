@@ -68,7 +68,11 @@ export function useRegion() {
     if (!href.startsWith('/')) return true
     const articles = REGION_ARTICLES[CURRENT_REGION]
     if (!articles || articles.size === 0) return true
-    let bare = href.replace(/^\/(hk|sg|us)(\/(zh-CN|zh-HK))?/, '')
+    let bare = href
+      // 锚点 / query 不参与"文章是否存在"判断 (搜索命中多为标题级，id 形如 /us/foo#heading)
+      .replace(/[#?].*$/, '')
+      .replace(/\.html$/, '')
+      .replace(/^\/(hk|sg|us)(\/(zh-CN|zh-HK))?/, '')
     if (bare !== '/' && bare.endsWith('/')) bare = `${bare}overview`
     if (!bare.startsWith('/')) bare = '/' + bare
     return articles.has(bare)

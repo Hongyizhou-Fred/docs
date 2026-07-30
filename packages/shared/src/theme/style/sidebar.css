@@ -130,13 +130,15 @@
   min-width: 0;
 }
 
-/* 顶级 group 标签强制单行；过长走 ellipsis 而不是换行 */
+/* 顶级 group 标签超长换行 (US 的 Zendesk 分类名可能很长，如
+ * "Funding Your Account, Withdrawals and Transfer")。此前 nowrap+ellipsis
+ * 在 group 带 link 的结构下收缩链断裂，文字会直接溢出侧边栏。 */
 .sidebar-group-label {
   flex: 1;
   min-width: 0;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  line-height: 1.4;
 }
 
 .VPSidebarItem.is-active .sidebar-item-icon,
