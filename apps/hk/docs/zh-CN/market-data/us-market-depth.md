@@ -99,7 +99,7 @@ sidebar: true
 
 行情商城入口
 
-**方式二**：通过「我的」>「行情商店」购买行情权限。
+**方式二**：通过「左上角头像」>「行情商店」购买行情权限。
 
 ![](./images/M9DQbmJsGoQDsdxa0uQjS57epRg.png)
 
