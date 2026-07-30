@@ -50,11 +50,26 @@ const REGIONS = [
   { code: 'us', labelKey: 'common.regionUS' },
 ]
 
-const LANGS = [
+const ALL_LANGS = [
   { code: 'en',    label: 'English',   link: '/' },
   { code: 'zh-CN', label: '简体中文', link: '/zh-CN/' },
   { code: 'zh-HK', label: '繁體中文', link: '/zh-HK/' },
 ]
+
+// 每个 region 实际暴露给用户的 locale。跟 config.mts:REGION_LOCALES 逻辑相关但
+// 不完全一致:config 里 US 是 ['en', 'zh-HK'](zh-HK 从 en 镜像作为 URL 兜底),
+// 而这里 UI switcher 只显 ['en'] —— 因为 Zendesk 没提供 zh-tw 翻译,给用户
+// 「繁體中文」选项等于骗他们(切过去还是英文正文)。等 Zendesk 补内容后,再把
+// zh-HK 加回来。
+const REGION_LANG_CODES: Record<string, string[]> = {
+  hk: ['en', 'zh-CN', 'zh-HK'],
+  sg: ['en', 'zh-CN', 'zh-HK'],
+  us: ['en'],
+}
+const LANGS = computed(() => {
+  const allowed = new Set(REGION_LANG_CODES[region.value] ?? ['en', 'zh-CN', 'zh-HK'])
+  return ALL_LANGS.filter(l => allowed.has(l.code))
+})
 
 const langOpen = ref(false)
 const langBtnRef = ref<HTMLButtonElement>()
@@ -106,7 +121,7 @@ const currentLang = computed(() => {
   return 'en'
 })
 
-function switchLang(target: typeof LANGS[number]) {
+function switchLang(target: typeof ALL_LANGS[number]) {
   if (target.code === currentLang.value) {
     langOpen.value = false
     return
