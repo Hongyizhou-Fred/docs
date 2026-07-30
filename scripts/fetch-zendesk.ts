@@ -57,6 +57,7 @@ async function main() {
   console.log(`  filter:  draft=${ARTICLE_FILTER.includeDrafts}  (only published articles)\n`)
 
   const totalStats: Record<string, LocaleStats> = {}
+  const pulledFsLocales: string[] = []
 
   for (const zdLocale of LOCALES_TO_PULL) {
     const fsLocale = LOCALE_TO_FS[zdLocale]
@@ -66,12 +67,43 @@ async function main() {
     }
     const stats = await syncLocale(client, zdLocale, fsLocale)
     totalStats[zdLocale] = stats
+    pulledFsLocales.push(fsLocale)
     console.log()
+  }
+
+  // 本仓 US region 支持的 fs locale 列表 (与 config.mts:REGION_LOCALES.us 保持一致)。
+  // 没被 Zendesk 拉的 locale(zh-tw 内容空，不在 LOCALES_TO_PULL) 从主源 (en) 镜像过来，
+  // 保证 /us/zh-HK/* 的每一篇文章都能落到实际 md 文件，不再依赖 config.mts 里那个
+  // 「首次不存在才 mirror」的 bootstrap 逻辑 (那个只在 dev 冷启动时跑一次，sync
+  // 完不会自动跟新)。
+  const US_FS_LOCALES = ['en', 'zh-HK']
+  const source = pulledFsLocales[0] ?? 'en'
+  const mirrorTargets = US_FS_LOCALES.filter(l => !pulledFsLocales.includes(l))
+  if (mirrorTargets.length) {
+    const sourceDir = path.join(CONTENT_ROOT, source)
+    for (const target of mirrorTargets) {
+      const targetDir = path.join(CONTENT_ROOT, target)
+      if (fs.existsSync(targetDir)) fs.rmSync(targetDir, { recursive: true, force: true })
+      copyDirRecursive(sourceDir, targetDir)
+      console.log(`  ↻ mirrored ${source} → ${target}`)
+    }
   }
 
   const elapsed = ((Date.now() - started) / 1000).toFixed(1)
   console.log(`✔ Done in ${elapsed}s`)
   console.log('  ' + Object.entries(totalStats).map(([l, s]) => `${l}: ${s.written} written, ${s.skippedDrafts} drafts skipped, ${s.pruned} stale removed`).join('\n  '))
+}
+
+function copyDirRecursive(src: string, dst: string): void {
+  if (!fs.existsSync(src)) return
+  fs.mkdirSync(dst, { recursive: true })
+  for (const entry of fs.readdirSync(src)) {
+    const sp = path.join(src, entry)
+    const dp = path.join(dst, entry)
+    const st = fs.statSync(sp)
+    if (st.isDirectory()) copyDirRecursive(sp, dp)
+    else fs.copyFileSync(sp, dp)
+  }
 }
 
 interface LocaleStats {
