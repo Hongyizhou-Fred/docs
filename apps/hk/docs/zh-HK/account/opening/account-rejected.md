@@ -45,6 +45,6 @@ sidebar: true
 
 如驳回原因不明确，或需要协助处理特殊情况，请联系客服：
 
-**在线客服**：长桥 App → 我的 → 帮助与客服 → 在线客服
+**在线客服**：长桥 App → 左上角头像 → 帮助与客服 → 在线客服
 **香港邮箱**：service@longbridge.hk
 **新加坡邮箱**：contact@longbridge.sg
