@@ -1,9 +1,6 @@
 {
   "compilerOptions": {
     "baseUrl": ".",
-    "paths": {
-      "@/*": ["docs/.vitepress/theme/*"]
-    },
     "moduleResolution": "bundler",
     "target": "ESNext",
     "module": "ESNext",
@@ -12,5 +9,9 @@
     "lib": ["ESNext", "DOM"],
     "skipLibCheck": true
   },
-  "include": ["docs/.vitepress/theme/**/*"]
+  "include": [
+    "packages/shared/src/**/*",
+    "apps/*/docs/.vitepress/**/*",
+    "apps/us/scripts/**/*"
+  ]
 }

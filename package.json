@@ -1,42 +1,19 @@
 {
-  "name": "longbridge-wiki",
+  "name": "longbridge-docs",
   "type": "module",
   "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
   "scripts": {
-    "dev": "vitepress dev docs",
-    "build": "NODE_DISABLE_COMPILE_CACHE=1 node --stack-size=8000 ./node_modules/.bin/vitepress build docs",
-    "preview": "vitepress preview docs",
-    "graph": "tsx scripts/generate-link-graph.ts",
-    "sync:us": "bun run scripts/fetch-zendesk.ts"
-  },
-  "devDependencies": {
-    "@iconify-json/ph": "^1.2.2",
-    "@types/markdown-it-container": "^2.0.10",
-    "@types/turndown": "^5.0.6",
-    "@unocss/extractor-mdc": "^66.1.2",
-    "@unocss/preset-icons": "^66.1.2",
-    "@unocss/preset-wind3": "^66.1.2",
-    "@unocss/transformer-directives": "^66.1.2",
-    "@unocss/transformer-variant-group": "^66.1.2",
-    "markdown-it": "^14.1.0",
-    "markdown-it-container": "^4.0.0",
-    "sass-embedded": "^1.89.2",
-    "unocss": "^66.6.8",
-    "vitepress": "2.0.0-alpha.8",
-    "vue": "^3.5.13"
-  },
-  "dependencies": {
-    "@phosphor-icons/vue": "^2.2.1",
-    "@vueuse/core": "^14.3.0",
-    "class-variance-authority": "^0.7.1",
-    "clsx": "^2.1.1",
-    "dotenv": "^17.4.2",
-    "github-slugger": "^2.0.0",
-    "radix-vue": "^1.9.17",
-    "reka-ui": "^2.9.7",
-    "tailwind-merge": "^3.6.0",
-    "turndown": "^7.2.4",
-    "turndown-plugin-gfm": "^1.0.2",
-    "vue-i18n": "^11.4.2"
+    "dev:hk": "cd apps/hk && bun run dev",
+    "dev:sg": "cd apps/sg && bun run dev",
+    "dev:us": "cd apps/us && bun run dev",
+    "build:hk": "cd apps/hk && bun run build",
+    "build:sg": "cd apps/sg && bun run build",
+    "build:us": "cd apps/us && bun run build",
+    "build": "bun run build:hk && bun run build:sg && bun run build:us",
+    "sync:us": "cd apps/us && bun run sync"
   }
 }

@@ -24,12 +24,28 @@ jobs:
 
       - run: bun install
 
-      - name: Build VitePress
+      # 三个 region app 各自独立构建(monorepo:apps/hk apps/sg apps/us,
+      # 共享层在 packages/shared)。每个 app base=/{region}/,产物合并后
+      # 对外 URL 与拆分前的单实例时代完全一致。
+      - name: Build all region apps
         run: bun run build
+
+      - name: Merge dists (single-domain layout)
+        run: |
+          mkdir -p dist
+          cp -r apps/hk/docs/.vitepress/dist dist/hk
+          cp -r apps/sg/docs/.vitepress/dist dist/sg
+          cp -r apps/us/docs/.vitepress/dist dist/us
+          # 根 404 兜底(GitHub Pages 只认根 /404.html);hk 产物的 404 引用
+          # /hk/assets/* 绝对路径,放到根也能正常工作
+          cp apps/hk/docs/.vitepress/dist/404.html dist/404.html
+          # 根路径重定向到默认 region
+          cp .github/pages-root/index.html dist/index.html
+          touch dist/.nojekyll
 
       - uses: actions/upload-pages-artifact@v3
         with:
-          path: docs/.vitepress/dist
+          path: dist
 
   deploy:
     environment:

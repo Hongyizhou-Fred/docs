@@ -4,35 +4,74 @@
   "workspaces": {
     "": {
       "name": "longbridge-wiki",
+    },
+    "apps/hk": {
+      "name": "@lb-docs/hk",
+      "version": "0.0.0",
       "dependencies": {
-        "@phosphor-icons/vue": "^2.2.1",
-        "@vueuse/core": "^14.3.0",
-        "class-variance-authority": "^0.7.1",
-        "clsx": "^2.1.1",
-        "dotenv": "^17.4.2",
-        "github-slugger": "^2.0.0",
-        "radix-vue": "^1.9.17",
-        "reka-ui": "^2.9.7",
-        "tailwind-merge": "^3.6.0",
-        "turndown": "^7.2.4",
-        "turndown-plugin-gfm": "^1.0.2",
-        "vue-i18n": "^11.4.2",
+        "@lb-docs/shared": "workspace:*",
       },
       "devDependencies": {
-        "@iconify-json/ph": "^1.2.2",
-        "@types/markdown-it-container": "^2.0.10",
+        "vitepress": "2.0.0-alpha.8",
+        "vue": "^3.5.13",
+      },
+    },
+    "apps/sg": {
+      "name": "@lb-docs/sg",
+      "version": "0.0.0",
+      "dependencies": {
+        "@lb-docs/shared": "workspace:*",
+      },
+      "devDependencies": {
+        "vitepress": "2.0.0-alpha.8",
+        "vue": "^3.5.13",
+      },
+    },
+    "apps/us": {
+      "name": "@lb-docs/us",
+      "version": "0.0.0",
+      "dependencies": {
+        "@lb-docs/shared": "workspace:*",
+        "dotenv": "^17.4.2",
+        "github-slugger": "^2.0.0",
+        "turndown": "^7.2.4",
+        "turndown-plugin-gfm": "^1.0.2",
+      },
+      "devDependencies": {
         "@types/turndown": "^5.0.6",
+        "vitepress": "2.0.0-alpha.8",
+        "vue": "^3.5.13",
+      },
+    },
+    "packages/shared": {
+      "name": "@lb-docs/shared",
+      "version": "0.0.0",
+      "dependencies": {
+        "@iconify-json/ph": "^1.2.2",
+        "@phosphor-icons/vue": "^2.2.1",
         "@unocss/extractor-mdc": "^66.1.2",
         "@unocss/preset-icons": "^66.1.2",
         "@unocss/preset-wind3": "^66.1.2",
         "@unocss/transformer-directives": "^66.1.2",
         "@unocss/transformer-variant-group": "^66.1.2",
+        "@vueuse/core": "^14.3.0",
+        "class-variance-authority": "^0.7.1",
+        "clsx": "^2.1.1",
         "markdown-it": "^14.1.0",
         "markdown-it-container": "^4.0.0",
+        "radix-vue": "^1.9.17",
+        "reka-ui": "^2.9.7",
         "sass-embedded": "^1.89.2",
+        "tailwind-merge": "^3.6.0",
         "unocss": "^66.6.8",
-        "vitepress": "2.0.0-alpha.8",
         "vue": "^3.5.13",
+        "vue-i18n": "^11.4.2",
+      },
+      "devDependencies": {
+        "@types/markdown-it-container": "^2.0.10",
+      },
+      "peerDependencies": {
+        "vitepress": "2.0.0-alpha.8",
       },
     },
   },
@@ -186,6 +225,14 @@
     "@jridgewell/sourcemap-codec": ["@jridgewell/sourcemap-codec@1.5.5", "https://git.5th.im/api/v4/packages/npm/@jridgewell/sourcemap-codec/-/sourcemap-codec-1.5.5.tgz", {}, "sha512-cYQ9310grqxueWbl+WuIUIaiUaDcj7WOq5fVhEljNVgRfOUhY9fy2zTvfoqWsnebh8Sl70VScFbICvJnLKB0Og=="],
 
     "@jridgewell/trace-mapping": ["@jridgewell/trace-mapping@0.3.31", "https://git.5th.im/api/v4/packages/npm/@jridgewell/trace-mapping/-/trace-mapping-0.3.31.tgz", { "dependencies": { "@jridgewell/resolve-uri": "^3.1.0", "@jridgewell/sourcemap-codec": "^1.4.14" } }, "sha512-zzNR+SdQSDJzc8joaeP8QQoCQr8NuYx2dIIytl1QeBEZHJ9uW6hebsrYgbz8hJwUQao3TWCMtmfV8Nu1twOLAw=="],
+
+    "@lb-docs/hk": ["@lb-docs/hk@workspace:apps/hk"],
+
+    "@lb-docs/sg": ["@lb-docs/sg@workspace:apps/sg"],
+
+    "@lb-docs/shared": ["@lb-docs/shared@workspace:packages/shared"],
+
+    "@lb-docs/us": ["@lb-docs/us@workspace:apps/us"],
 
     "@mixmark-io/domino": ["@mixmark-io/domino@2.2.0", "https://git.5th.im/api/v4/packages/npm/@mixmark-io/domino/-/domino-2.2.0.tgz", {}, "sha512-Y28PR25bHXUg88kCV7nivXrP2Nj2RueZ3/l/jdx6J9f8J4nsEGcgX0Qe6lt7Pa+J79+kPiJU3LguR6O/6zrLOw=="],
 
@@ -357,7 +404,7 @@
 
     "@types/mdurl": ["@types/mdurl@1.0.5", "https://git.5th.im/api/v4/packages/npm/@types/mdurl/-/mdurl-1.0.5.tgz", {}, "sha512-6L6VymKTzYSrEf4Nev4Xa1LCHKrlTlYCBMTlQKFuddo1CvQcE52I0mwfOJayueUC7MJuXOeHTcIU683lzd0cUA=="],
 
-    "@types/turndown": ["@types/turndown@5.0.6", "", {}, "sha512-ru00MoyeeouE5BX4gRL+6m/BsDfbRayOskWqUvh7CLGW+UXxHQItqALa38kKnOiZPqJrtzJUgAC2+F0rL1S4Pg=="],
+    "@types/turndown": ["@types/turndown@5.0.6", "https://git.5th.im/api/v4/packages/npm/@types/turndown/-/turndown-5.0.6.tgz", {}, "sha512-ru00MoyeeouE5BX4gRL+6m/BsDfbRayOskWqUvh7CLGW+UXxHQItqALa38kKnOiZPqJrtzJUgAC2+F0rL1S4Pg=="],
 
     "@types/unist": ["@types/unist@3.0.3", "https://git.5th.im/api/v4/packages/npm/@types/unist/-/unist-3.0.3.tgz", {}, "sha512-ko/gIFJRv177XgZsZcBwnqJN5x/Gien8qNOn0D5bQU/zAzVf9Zt3BlcUiLqhV9y4ARk0GbT3tnUiPNgnTXzc/Q=="],
 

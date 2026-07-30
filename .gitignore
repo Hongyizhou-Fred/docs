@@ -1,30 +1,23 @@
 node_modules
-.vitepress/dist
-.vitepress/cache
-docs/.vitepress/dist
-docs/.vitepress/cache
+**/.vitepress/dist
+**/.vitepress/cache
 .idea
 CLAUDE.md
 .DS_Store
-scripts/*
-!scripts/*.ts
-!scripts/zendesk
-!scripts/zendesk/**
 
 # Zendesk 结构 dump / debug 产物,不入库
 us-zendesk-dump.json
 zendesk-*-dump.json
 
-# US zh-HK 目前是 en 的纯 mirror(Zendesk 无 zh-cn/tw 内容),transient,不入库
-# 待 S2 拉到真实 zh-tw 内容并映射进来后再移除这行
-docs/us/zh-HK/
+# US zh-HK 目前是 en 的纯 mirror(Zendesk 无 zh-tw 翻译内容),由 sync:us 生成,不入库
+# 待 Zendesk 出现真实 zh-tw 内容并加进 LOCALES_TO_PULL 后再移除这行
+apps/us/docs/zh-HK/
+
 .playwright-mcp
 graphrag_quickstart
 .superpowers/
 .impeccable/
-docs/superpowers/
 .tweak/
 .env
 .env.local
 .env.*.local
-docs/.env.local
