@@ -1,0 +1,41 @@
+{
+  "name": "@lb-docs/shared",
+  "version": "0.0.0",
+  "type": "module",
+  "private": true,
+  "description": "Longbridge Docs 共享层：theme 组件 / composables / i18n / VitePress 配置工厂 / UnoCSS 配置。纯源码包，无构建步骤，由各 app 的 Vite 直接消费。",
+  "exports": {
+    "./theme": "./src/theme/index.ts",
+    "./config": "./src/config/create-docs-config.ts",
+    "./config/tabs": "./src/config/tabs.config.ts",
+    "./uno": "./src/uno/config.ts",
+    "./i18n": "./src/i18n/index.ts"
+  },
+  "dependencies": {
+    "@iconify-json/ph": "^1.2.2",
+    "@phosphor-icons/vue": "^2.2.1",
+    "@unocss/extractor-mdc": "^66.1.2",
+    "@unocss/preset-icons": "^66.1.2",
+    "@unocss/preset-wind3": "^66.1.2",
+    "@unocss/transformer-directives": "^66.1.2",
+    "@unocss/transformer-variant-group": "^66.1.2",
+    "@vueuse/core": "^14.3.0",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
+    "markdown-it": "^14.1.0",
+    "markdown-it-container": "^4.0.0",
+    "radix-vue": "^1.9.17",
+    "reka-ui": "^2.9.7",
+    "sass-embedded": "^1.89.2",
+    "tailwind-merge": "^3.6.0",
+    "unocss": "^66.6.8",
+    "vue": "^3.5.13",
+    "vue-i18n": "^11.4.2"
+  },
+  "devDependencies": {
+    "@types/markdown-it-container": "^2.0.10"
+  },
+  "peerDependencies": {
+    "vitepress": "2.0.0-alpha.8"
+  }
+}

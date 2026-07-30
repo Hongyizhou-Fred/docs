@@ -1,0 +1,6 @@
+# Bun 1.3 起 workspaces 默认 isolated linker(pnpm 式严格隔离)。本仓 shared 包
+# 以 .ts/.vue 源码形态被三个 app 消费,构建期工具(unocss presetIcons 的
+# @iconify-json 图标集、sass 等)需要从 app 进程沿 node 解析链可达,hoisted
+# 布局(全部提升到根 node_modules,与拆分前单包时代一致)最少意外。
+[install]
+linker = "hoisted"
