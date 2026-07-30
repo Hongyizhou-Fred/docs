@@ -19,7 +19,7 @@ import { useI18n } from '../../i18n/useI18n'
 const router = useRouter()
 const { lang } = useData()
 const { t } = useI18n()
-const { withRegionAndLocale } = useRegion()
+const { withRegionAndLocale, articleExists } = useRegion()
 const { isOpen, close } = useSearchDialog()
 const { results, isSearching, search, clear } = useDocsSearch()
 const { history, addToHistory, removeFromHistory, clearHistory } = useSearchHistory()
@@ -31,13 +31,17 @@ const inputRef = ref<HTMLInputElement | null>(null)
 const listRef = ref<HTMLElement | null>(null)
 
 // ── Mode ────────────────────────────────────────────────────
-const isHistoryMode = computed(() => !query.value.trim() && history.value.length > 0)
+// 历史记录按"目标文章在当前 region 是否存在"过滤:兜住跨 region 的旧记录
+// (存储 key 已按 region 隔离,这里防的是历史遗留数据)和被 Zendesk 同步
+// 撤稿删除的文章 —— 两种情况点击都会 404。
+const visibleHistory = computed(() => history.value.filter((h) => articleExists(h.id)))
+const isHistoryMode = computed(() => !query.value.trim() && visibleHistory.value.length > 0)
 const hasAiRow = computed(() => query.value.trim().length > 0)
 
 // Unified list for keyboard navigation
 const activeList = computed<DocSearchItem[]>(() => {
   if (isHistoryMode.value) {
-    return history.value.map((h) => ({ ...h, score: 0 }))
+    return visibleHistory.value.map((h) => ({ ...h, score: 0 }))
   }
   return results.value
 })
@@ -133,7 +137,7 @@ function removeHistory(e: MouseEvent, id: string) {
   e.preventDefault()
   e.stopPropagation()
   removeFromHistory(id)
-  if (history.value.length === 0) selectedIndex.value = -1
+  if (visibleHistory.value.length === 0) selectedIndex.value = -1
 }
 
 // ── Formatting ───────────────────────────────────────────────
