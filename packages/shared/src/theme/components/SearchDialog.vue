@@ -20,10 +20,10 @@ const router = useRouter()
 const { lang } = useData()
 const { t } = useI18n()
 const { withRegionAndLocale, articleExists } = useRegion()
-const { isOpen, close } = useSearchDialog()
+const { isOpen, close, consumePendingQuery } = useSearchDialog()
 const { results, isSearching, search, clear } = useDocsSearch()
 const { history, addToHistory, removeFromHistory, clearHistory } = useSearchHistory()
-const { openAIModal } = useAIModal()
+const { openAIModal, aiEnabled } = useAIModal()
 
 const query = ref('')
 const selectedIndex = ref(-1)
@@ -36,7 +36,8 @@ const listRef = ref<HTMLElement | null>(null)
 // 撤稿删除的文章 —— 两种情况点击都会 404。
 const visibleHistory = computed(() => history.value.filter((h) => articleExists(h.id)))
 const isHistoryMode = computed(() => !query.value.trim() && visibleHistory.value.length > 0)
-const hasAiRow = computed(() => query.value.trim().length > 0)
+// US 站内嵌 Whale App 时 AI 整体关闭,搜索弹窗里的"问 AI 助手"行同步隐藏
+const hasAiRow = computed(() => aiEnabled.value && query.value.trim().length > 0)
 
 // Unified list for keyboard navigation
 const activeList = computed<DocSearchItem[]>(() => {
@@ -63,9 +64,16 @@ const showBody = computed(
 // ── Open/close ───────────────────────────────────────────────
 watch(isOpen, async (open) => {
   if (open) {
-    query.value = ''
+    // 带初始 query 打开(如 hero 提问在 AI 关闭时 fallback 过来):预填并
+    // 立即搜索;否则清空进入历史记录模式
+    const pending = consumePendingQuery()
+    query.value = pending ?? ''
     selectedIndex.value = -1
-    clear()
+    if (pending) {
+      search(pending, lang.value === 'root' ? 'root' : lang.value)
+    } else {
+      clear()
+    }
     if (inBrowser) {
       document.body.style.overflow = 'hidden'
       await nextTick()

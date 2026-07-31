@@ -2,11 +2,14 @@
 import { computed, inject } from 'vue'
 import { useI18n } from '../../../i18n/useI18n'
 import { useRegion } from '../../composables/useRegion'
+import { useWhaleEmbed } from '../../composables/useWhaleEmbed'
 import { categoryGroups } from '../../data/category-groups'
 
 const openAIModal = inject<(q: string) => void>('openAIModal', () => {})
 const { t } = useI18n()
 const { withRegionAndLocale, articleExists } = useRegion()
+// US 站内嵌 Whale App 时 AI 整体关闭,页脚 Ask AI 按钮同步隐藏
+const { isUsWhaleEmbed } = useWhaleEmbed()
 
 // 三列基础数据：交易类 / 账户支撑 / 帮助
 const baseCols = [
@@ -38,7 +41,7 @@ function askAi() {
         <div class="ftm__brand">
           <div class="ftm__brand-name">Longbridge Docs</div>
           <p class="ftm__tagline">{{ t('footerMini.tagline') }}</p>
-          <button type="button" class="ftm__ai" @click="askAi">
+          <button v-if="!isUsWhaleEmbed" type="button" class="ftm__ai" @click="askAi">
             {{ t('footerMini.askAi') }}
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
               <path d="M5 12h14" />

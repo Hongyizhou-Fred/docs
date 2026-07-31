@@ -19,6 +19,8 @@ const zhCN = {
     regionHK: '中国香港',
     regionSG: '新加坡',
     regionUS: '美国',
+    backToTop: '返回顶部',
+    openMenu: '打开菜单',
     apiSdk: 'API 和 SDK',
   },
   brand: {
@@ -67,6 +69,9 @@ const zhCN = {
     titleEm: '答案在这里',
     subtitle: '覆盖 A 股、期权、ETF、合规等 9 大主题的专业文档库，搭配 AI 问答助手，让每一个金融问题都有迹可查。',
     placeholder: '输入关键词或问题，如「如何打开杠杆」',
+    // US(对准 Zendesk 现有文档)
+    usPlaceholder: '输入关键词或问题，如「加密货币入金」',
+    usPlaceholderExample: '如何向长桥账户转入加密货币？',
     searchAriaLabel: '搜索关键词',
     search: '搜索',
     askAi: '⚡ 向 AI 提问',
@@ -477,6 +482,12 @@ const zhCN = {
         w8ben: 'W-8BEN',
         margin: '融资融券',
         cashPlus: '活钱通',
+        // US(对准 Zendesk 现有文档)
+        usCryptoDeposit: '加密货币入金',
+        usFees: '费用与收费',
+        usIndexOptions: '指数期权',
+        usBuyingPower: '购买力',
+        usCryptoTax: '加密税务',
       },
       prompts: {
         hkTrading: '港股交易规则和常见手续费是什么？',
@@ -485,6 +496,12 @@ const zhCN = {
         w8ben: '美股 W-8BEN 表格怎么填写和提交？',
         margin: '长桥融资融券保证金规则和风控机制是什么？',
         cashPlus: '活钱通是什么，购买和赎回流程怎么操作？',
+        // US(prompt 兼作 whale-embed 下的搜索预填词)
+        usCryptoDeposit: '如何向长桥账户转入加密货币？',
+        usFees: '长桥证券的费用与收费标准是什么？',
+        usIndexOptions: '指数期权是如何运作的？',
+        usBuyingPower: '购买力如何计算？什么时候会触发追缴保证金？',
+        usCryptoTax: '加密资产的税务申报要求是什么？',
       },
       cards: {
         hkFees:         { q: '港股交易手续费明细', prompt: '港股交易手续费有哪些？包括佣金、印花税、平台费等' },

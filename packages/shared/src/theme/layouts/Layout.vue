@@ -7,7 +7,10 @@ import PageHero from '../components/PageHero.vue'
 import PageFeedback from '../components/PageFeedback.vue'
 import SearchDialog from '../components/SearchDialog.vue'
 import AiChatDrawer from '../components/AiChatDrawer.vue'
+import BackToTop from '../components/BackToTop.vue'
+import SidebarFab from '../components/SidebarFab.vue'
 import { useAIModal } from '../composables/useAIModal'
+import { useWhaleEmbed } from '../composables/useWhaleEmbed'
 import { useI18n } from '../../i18n/useI18n'
 
 const { frontmatter } = useData()
@@ -20,6 +23,9 @@ const isDocPage = computed(() => {
 const isHomePage = computed(() => frontmatter.value.layout === 'page')
 
 const { modalOpen, initialQuery, openAIModal } = useAIModal()
+// US 站内嵌 Whale App 时不挂载 AI 抽屉与悬浮球(Helora SDK 随抽屉懒加载,
+// 不挂载即不拉取任何 AI 资源)
+const { isUsWhaleEmbed } = useWhaleEmbed()
 const { t } = useI18n()
 
 // 抽屉打开时给 html 加 .ai-drawer-open，tailwind.css 里有现成的规则把 main
@@ -27,6 +33,14 @@ const { t } = useI18n()
 watch(modalOpen, (open) => {
   if (!inBrowser) return
   document.documentElement.classList.toggle('ai-drawer-open', open)
+}, { immediate: true })
+
+// whale-embed 时给 html 打 .lb-whale-embed:tailwind.css 里把 --hn-height
+// 归零,VPContent/VPSidebar 为 header 预留的 padding 随之塌掉(否则隐藏
+// header 后顶部会留一条 56px 空白)
+watch(isUsWhaleEmbed, (on) => {
+  if (!inBrowser) return
+  document.documentElement.classList.toggle('lb-whale-embed', on)
 }, { immediate: true })
 
 function syncHomeClass(val: boolean) {
@@ -183,7 +197,8 @@ onMounted(applyCollapsedPreference)
 <template>
   <DefaultTheme.Layout>
     <template #layout-top>
-      <HomeNavbar />
+      <!-- US 站内嵌 Whale App 时整个 header 隐藏(App 容器自带导航) -->
+      <HomeNavbar v-if="!isUsWhaleEmbed" />
     </template>
     <template #doc-before>
       <PageHero v-if="isDocPage" />
@@ -193,9 +208,11 @@ onMounted(applyCollapsedPreference)
     </template>
     <template #layout-bottom>
       <SearchDialog />
-      <AiChatDrawer v-model="modalOpen" :initial-query="initialQuery" />
+      <BackToTop />
+      <SidebarFab />
+      <AiChatDrawer v-if="!isUsWhaleEmbed" v-model="modalOpen" :initial-query="initialQuery" />
       <button
-        v-if="!isHomePage"
+        v-if="!isHomePage && !isUsWhaleEmbed"
         v-show="!modalOpen"
         class="ai-fab-mobile fixed bottom-7 right-7 w-12 h-12 rounded-full bg-brand-1 text-white border-0 cursor-pointer flex items-center justify-center z-[999] transition-[transform,box-shadow] duration-150 hover:-translate-y-0.5"
         style="box-shadow: 0 4px 16px var(--vp-c-brand-soft);"

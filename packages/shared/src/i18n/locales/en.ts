@@ -20,6 +20,8 @@ const en = {
     regionHK: 'Hong Kong',
     regionSG: 'Singapore',
     regionUS: 'United States',
+    backToTop: 'Back to top',
+    openMenu: 'Open menu',
     apiSdk: 'API & SDK',
   },
   brand: {
@@ -49,6 +51,9 @@ const en = {
     subtitle: 'The official Longbridge knowledge base — covering account opening, trading, transfers, and compliance across Hong Kong, US, and Singapore markets. Every answer traces back to authoritative documentation.',
     placeholder: 'Search or ask — e.g. "HK trading fees"',
     placeholderExample: 'How are HK stock trading fees calculated?',
+    // US(对准 Zendesk 现有文档)
+    usPlaceholder: 'Search or ask — e.g. "crypto deposit"',
+    usPlaceholderExample: 'How do I deposit crypto into my Longbridge account?',
     search: 'Search',
     hotSearchLabel: 'Trending:',
     askAi: 'Ask AI',
@@ -369,6 +374,12 @@ const en = {
         w8ben: 'W-8BEN',
         margin: 'Margin',
         cashPlus: 'Cash Plus',
+        // US(对准 Zendesk 现有文档)
+        usCryptoDeposit: 'Crypto Deposit',
+        usFees: 'Fees & Charges',
+        usIndexOptions: 'Index Options',
+        usBuyingPower: 'Buying Power',
+        usCryptoTax: 'Crypto Tax',
       },
       prompts: {
         hkTrading: 'What are the HK stock trading rules and common fees?',
@@ -377,6 +388,12 @@ const en = {
         w8ben:     'How do I fill out and submit the US W-8BEN form?',
         margin:    'What are Longbridge’s margin and risk-control rules?',
         cashPlus:  'What is Cash Plus, and how do I subscribe and redeem?',
+        // US(prompt 兼作 whale-embed 下的搜索预填词)
+        usCryptoDeposit: 'How do I deposit crypto into my Longbridge account?',
+        usFees:          'Longbridge Securities fees and charges',
+        usIndexOptions:  'How do index options work?',
+        usBuyingPower:   'How does buying power work and when is a margin call triggered?',
+        usCryptoTax:     'Crypto tax reporting requirements',
       },
       cards: {
         hkFees:         { q: 'HK trading fee breakdown',          prompt: 'What are the HK stock trading fees? Including commission, stamp duty, platform fees, etc.' },
