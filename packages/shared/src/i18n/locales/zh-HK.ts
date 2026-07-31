@@ -20,6 +20,8 @@ const zhHK = {
     regionHK: '中國香港',
     regionSG: '新加坡',
     regionUS: '美國',
+    backToTop: '返回頂部',
+    openMenu: '打開選單',
     apiSdk: 'API 與 SDK',
   },
   brand: {
@@ -49,6 +51,9 @@ const zhHK = {
     subtitle: '長橋官方知識庫，匯集港股、美股、新加坡三大市場的開戶、交易、出入金與合規規則，每一條回答均可溯源至文檔。',
     placeholder: '輸入關鍵詞或直接提問，如「港股交易費用怎麼算」',
     placeholderExample: '港股交易費用怎麼算',
+    // US(對準 Zendesk 現有文檔)
+    usPlaceholder: '輸入關鍵詞或直接提問，如「加密貨幣入金」',
+    usPlaceholderExample: '如何向長橋賬戶轉入加密貨幣？',
     search: '搜尋',
     hotSearchLabel: '熱搜：',
     askAi: '向 AI 提問',
@@ -369,6 +374,12 @@ const zhHK = {
         w8ben: 'W-8BEN',
         margin: '融資融券',
         cashPlus: '活錢通',
+        // US(對準 Zendesk 現有文檔)
+        usCryptoDeposit: '加密貨幣入金',
+        usFees: '費用與收費',
+        usIndexOptions: '指數期權',
+        usBuyingPower: '購買力',
+        usCryptoTax: '加密稅務',
       },
       prompts: {
         hkTrading: '港股交易規則和常見手續費是什麼？',
@@ -377,6 +388,12 @@ const zhHK = {
         w8ben:     '美股 W-8BEN 表格怎麼填寫和提交？',
         margin:    '長橋融資融券保證金規則和風控機制是什麼？',
         cashPlus:  '活錢通是什麼，購買和贖回流程怎麼操作？',
+        // US(prompt 兼作 whale-embed 下的搜索預填詞)
+        usCryptoDeposit: '如何向長橋賬戶轉入加密貨幣？',
+        usFees: '長橋證券的費用與收費標準是什麼？',
+        usIndexOptions: '指數期權是如何運作的？',
+        usBuyingPower: '購買力如何計算？什麼時候會觸發追繳保證金？',
+        usCryptoTax: '加密資產的稅務申報要求是什麼？',
       },
       cards: {
         hkFees:         { q: '港股交易手續費明細', prompt: '港股交易手續費有哪些？包括佣金、印花稅、平台費等' },

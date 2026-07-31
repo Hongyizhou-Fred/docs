@@ -6,6 +6,7 @@
   "description": "Longbridge Docs 共享层：theme 组件 / composables / i18n / VitePress 配置工厂 / UnoCSS 配置。纯源码包，无构建步骤，由各 app 的 Vite 直接消费。",
   "exports": {
     "./theme": "./src/theme/index.ts",
+    "./env": "./src/theme/lib/whale-env.ts",
     "./config": "./src/config/create-docs-config.ts",
     "./config/tabs": "./src/config/tabs.config.ts",
     "./uno": "./src/uno/config.ts",

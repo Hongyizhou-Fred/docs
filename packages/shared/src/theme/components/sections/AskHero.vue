@@ -1,15 +1,25 @@
 <script setup lang="ts">
 import { ref, inject, computed } from 'vue'
-import { hotSearchTags } from '../../data/featured-asks'
+import { hotSearchTagsByRegion } from '../../data/featured-asks'
 import HeroGridBg from '../HeroGridBg.vue'
+import { useRegion } from '../../composables/useRegion'
 import { useI18n } from '../../../i18n/useI18n'
 
 const openAIModal = inject<(q: string) => void>('openAIModal', () => {})
+const { region } = useRegion()
 const { t } = useI18n()
 
+// 热搜标签按 region 取:US 对准 Zendesk 现有文档,HK/SG 沿用原集合
+const hotSearchTags = computed(() => hotSearchTagsByRegion[region.value] ?? hotSearchTagsByRegion.hk)
+
 const inputValue = ref('')
-const searchPlaceholder = computed(() => t('askHero.placeholder'))
-const searchExample = computed(() => t('askHero.placeholderExample'))
+// placeholder 按 region 取:US 的示例文案对准 Zendesk 现有文档,不再出现 HK 字样
+const searchPlaceholder = computed(() =>
+  t(region.value === 'us' ? 'askHero.usPlaceholder' : 'askHero.placeholder'),
+)
+const searchExample = computed(() =>
+  t(region.value === 'us' ? 'askHero.usPlaceholderExample' : 'askHero.placeholderExample'),
+)
 
 function submit() {
   const q = inputValue.value.trim()

@@ -192,6 +192,28 @@
   --vp-nav-height: var(--hn-height, 56px);
 }
 
+/* US 站内嵌 Whale App(html.lb-whale-embed，由 Layout.vue 挂载时打上):
+ * 整个 header 不渲染，把 nav 高度归零，让所有 var(--hn-height) 消费方
+ * (VPContent/VPSidebar padding、aside sticky 等) 自动塌掉，消除顶部留白 */
+html.lb-whale-embed {
+  --hn-height: 0px;
+}
+
+/* whale-embed 下首页 hero 与 TaskIndex 之间的模块 (DividerCopy/AnswerShowcase)
+ * 被隐藏，两个 section 各自的大 padding 直接相邻 (72+72≈144px 空档)，压缩到
+ * 正常节奏。scoped style 的 class 仍在 DOM 上，全局规则可以命中 */
+html.lb-whale-embed .ask-hero {
+  padding-bottom: 40px;
+}
+html.lb-whale-embed .ti {
+  padding-top: 32px;
+}
+
+/* whale-embed 下 TaskIndex 标题与 hero 的居中版式对齐 */
+html.lb-whale-embed .ti__title {
+  text-align: center;
+}
+
 /* nav 改为 position: fixed 后，VPContent 需 padding-top 给固定 nav 让位
  * 注：VitePress 默认在 960+ 也加这条；这里显式覆盖确保所有断点都生效 */
 .custom-nav-layout .VPContent {
@@ -233,8 +255,13 @@
   margin-top: 0 !important;
 }
 
+/* 移动端 local-nav 顶部通栏 (☰ Menu / Return to top / On this page) 整条
+ * 视觉隐藏：菜单入口改由左下角悬浮按钮 SidebarFab.vue 承接，回到顶部由
+ * BackToTop.vue 承接。
+ * 注意只能 display:none 不能移除 —— VPLocalNav 的 .menu 按钮持有 VitePress
+ * Layout 的 open-menu 事件绑定，SidebarFab 靠代理 .click() 打开原生抽屉 */
 .custom-nav-layout .VPLocalNav {
-  top: var(--hn-height, 56px);
+  display: none;
 }
 
 /* 首页额外隐藏 VPNav（兼容旧逻辑，custom-nav-layout 已涵盖） */
