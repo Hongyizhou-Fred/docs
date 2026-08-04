@@ -27,7 +27,7 @@ sidebar: true
 
 ## 参与步骤
 
-1. 在「活动中心」找到当期基础活动并查看活动规则
+1. 在「活动中心」找到当期基础活动并查看活动规则。[点击此处去活动中心逛逛](https://longbridge.activity.wbrks.com/opa/activity/center)
 
 2. 确认账户符合参与条件（用户类型、账户渠道等）
 
@@ -35,7 +35,7 @@ sidebar: true
 
 4. 系统自动检测任务完成情况，符合条件后触发奖励发放
 
-5. 奖励发放后可在「左上角头像 → 活动中心 → 奖励」查看奖励状态
+5. 奖励发放后可在「左上角头像 → 活动中心 → 奖励」查看奖励状态。[点击此处去活动中心逛逛](https://longbridge.activity.wbrks.com/opa/activity/center)
 
 ## 任务完成判定
 
@@ -110,4 +110,4 @@ sidebar: true
 
 - 部分任务（如入资类）采用次日批量处理，当天无法立即看到奖励记录，属正常现象
 
-- 奖励查看路径：APP「左上角头像 → 活动中心 → 奖励」
+- 奖励查看路径：APP「左上角头像 → 活动中心 → 奖励」。[点击此处去活动中心逛逛](https://longbridge.activity.wbrks.com/opa/activity/center)

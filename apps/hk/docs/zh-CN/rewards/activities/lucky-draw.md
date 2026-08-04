@@ -33,7 +33,7 @@ sidebar: true
 
 ## 参与步骤
 
-1. 在「活动中心」找到当期抽奖活动
+1. 在「活动中心」找到当期抽奖活动。[点击此处去活动中心逛逛](https://longbridge.activity.wbrks.com/opa/activity/center)
 
 2. 完成指定任务获取抽奖机会（抽奖券）
 
@@ -43,7 +43,7 @@ sidebar: true
 
 5. 中奖奖励自动进入发放流程
 
-6. 在「活动中心 → 我的奖励」查看奖励发放状态
+6. 在「活动中心 → 我的奖励」查看奖励发放状态。[点击此处去活动中心逛逛](https://longbridge.activity.wbrks.com/opa/activity/center)
 
 7. 未使用的抽奖机会通常在活动结束后失效
 
