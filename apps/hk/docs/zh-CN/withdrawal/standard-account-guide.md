@@ -6,6 +6,7 @@ sidebar: true
 # 标准账户出金
 
 标准账户出金支持的币种、方式、到账时间、各币种手续费及限制条件。
+[点击此处办理提取资金](https://longbridge.app.wbrks.com/atm/withdraw)
 
 ## 重要提示
 
@@ -16,11 +17,11 @@ sidebar: true
 ## 支持币种
 
 港元（HKD）、美元（USD）、澳元（AUD）、人民币（CNY）、马来西亚令吉（MYR）、新加坡元（SGD）、英镑（GBP）、欧元（EUR）、日元（JPY）
-
+[点击此处办理提取资金](https://longbridge.app.wbrks.com/atm/withdraw)
 ## 支持出金方式
 
 电汇（WIRE）、网银转账、FPS 转数快
-
+[点击此处办理提取资金](https://longbridge.app.wbrks.com/atm/withdraw)
 ## 到账时间
 
 预计 1-3 个交易日
@@ -61,7 +62,7 @@ sidebar: true
 
 ## 操作流程
 
-长桥 App - 资产 - 全部功能 - 提取资金，选择币种、收款银行、输入金额后提交。
+长桥 App - 资产 - 全部功能 - 提取资金，选择币种、收款银行、输入金额后提交。[点击此处办理提取资金](https://longbridge.app.wbrks.com/atm/withdraw)
 
 ## 支持账户类型与出金限制
 
