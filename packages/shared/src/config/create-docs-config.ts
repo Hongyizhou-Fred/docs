@@ -280,6 +280,16 @@ export function createDocsConfig(opts: CreateDocsConfigOptions): UserConfig {
     },
 
     vite: {
+      server: {
+        host: '127.0.0.1',
+        port: 9999,
+        strictPort: true,
+      },
+      preview: {
+        host: '127.0.0.1',
+        port: 9999,
+        strictPort: true,
+      },
       plugins: [UnoCSS(unoConfig as any), rawMarkdownPlugin(docsDir, base, locales)],
       resolve: {
         alias: {

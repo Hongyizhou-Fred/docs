@@ -10,7 +10,10 @@ const pendingQuery = ref<string | null>(null)
 
 export function useSearchDialog() {
   function open(query?: string) {
-    pendingQuery.value = query?.trim() ? query : null
+    // 防御:@click="open" 直连时 Vue 会把 MouseEvent 当 query 传进来，
+    // 只接受字符串，其它一律视作"无预填 query"
+    const q = typeof query === 'string' ? query : ''
+    pendingQuery.value = q.trim() ? q : null
     if (inBrowser) {
       window.dispatchEvent(new CustomEvent('lb:search:toggle'))
     } else {
