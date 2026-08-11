@@ -51,7 +51,7 @@ sidebar: true
 
 **操作流程：**
 
-1. 长桥 App → 资产 → 存入股票 → 提交转入申请
+1. 长桥 App → 资产 → 转入股票 → 提交转入申请
 
 ![](./images/Q3qpbHYxUo7FfZxnJOOjVxwtpTa.png)
 
