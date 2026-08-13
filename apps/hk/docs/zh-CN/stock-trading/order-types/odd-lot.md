@@ -45,7 +45,7 @@ sidebar: true
 
 ### 支持标的
 
-可通过长桥 App 市场 - 分类榜查找支持碎股交易的标的，个股详情页会展示碎股图标。
+可通过长桥 App 市场 - 分类榜查找支持碎股交易的标的，个股详情页会展示碎股图标。 [点击此处进入市场页面](lb://page/market/tab)
 
 ![](./images/E209b26rwoX7gMxFCNWj19QJpgf.png)
 
