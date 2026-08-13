@@ -116,7 +116,7 @@ sidebar: true
 
 全部功能页汇集了资产 Tab 的所有操作入口，按功能类别分组排列。右上角「管理」可自定义哪些功能显示在资产页快捷功能栏。
 
-入口：资产页 → 快捷功能栏「全部功能」
+入口：资产页 → 快捷功能栏「全部功能」 [点击此处进入资产首页](lb://page/fortune/home)
 
 ![](./images/Gy8ObADhXoQ5esxQRiVjgvSnptb.png)
 
