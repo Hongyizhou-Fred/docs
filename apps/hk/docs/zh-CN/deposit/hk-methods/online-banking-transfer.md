@@ -71,7 +71,7 @@ sidebar: true
 
 ## 操作步骤
 
-1. 打开长桥 App，进入**资产 → 存入资金 → 选择入金币种 → 选择香港银行卡 → 网银转账**，查看收款银行信息
+1. 打开长桥 App，进入**资产 → 存入资金 → 选择入金币种 → 选择香港银行卡 → 网银转账**，查看收款银行信息 [点击此处办理资金入账](lb://page/mine/deposit)
 
 ![](./images/OlXNb1PQDoeh6rxtaCGjlK7XpqB.png)
 
