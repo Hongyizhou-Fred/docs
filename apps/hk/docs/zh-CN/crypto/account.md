@@ -19,7 +19,7 @@ sidebar: true
 
 ## 开通步骤
 
-进入长桥 App → 市场，切换顶部标签至虚拟资产频道，即可查看各类虚拟资产行情及最新资讯。
+进入长桥 App → 市场，切换顶部标签至虚拟资产频道，即可查看各类虚拟资产行情及最新资讯。[点击此处进入市场页面](lb://page/market/tab)
 
 ![](./images/EDW7bloFxoU7BGxMqEnjsQp7phg.png)
 
