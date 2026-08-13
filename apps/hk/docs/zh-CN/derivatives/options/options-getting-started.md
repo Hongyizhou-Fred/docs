@@ -21,7 +21,7 @@ sidebar: true
 
 期权主页
 
-点击 App 搜索图标，输入 **AAPL**（苹果公司）。
+点击 App 搜索图标，输入 **AAPL**（苹果公司）。 [点击此处进入全局搜索页面](lb://page/discovery/search-stocks)
 
 进入 AAPL 股票详情页，查看顶部显示的**当前股价**。记下这个价格，接下来选择行权价时会用到。
 
