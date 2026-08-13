@@ -11,7 +11,7 @@ sidebar: true
 
 ## 功能入口
 
-- 方式一：长桥 App - 个股详情 - 更多 - 定投，创建该股票的定投计划
+- 方式一：长桥 App - 个股详情 - 更多 - 定投，创建该股票的定投计划 
 
 ![](./images/TC1pb6yzcoRk3PxxUCtjXNEZpof.png)
 
@@ -71,7 +71,7 @@ sidebar: true
 
 定投通知消息
 
-- 订单记录：长桥 App - 资产 - 全部功能 - 订单记录（定投订单会有定投标识，可在「策略订单」标签页查看）
+- 订单记录：长桥 App - 资产 - 全部功能 - 订单记录（定投订单会有定投标识，可在「策略订单」标签页查看） [点击此处进入我的订单列表页面](lb://page/trade/order_list)
 
 ![](./images/WZqsbh2FvoGl2Yx2HRpjz8pmpkg.png)
 
