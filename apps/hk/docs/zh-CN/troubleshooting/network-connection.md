@@ -11,7 +11,7 @@ sidebar: true
 
 长桥提供在线网络诊断工具，可检测网络连接状况，同时也可以在此上传诊断日志。
 
-访问方式： - [网页访问](http%3A%2F%2Fdetect.longbridge-inc.com%2F) - App 入口：设置 - 通用 - 使用浏览器打开网络诊断
+访问方式： - [网页访问](http%3A%2F%2Fdetect.longbridge-inc.com%2F) - App 入口：设置 - 通用 - 使用浏览器打开网络诊断 [点击此处进入设置首页](lb://page/mine/setting)
 
 ![](./images/Wtsrbp02PoxKy4xdKe7j6w0LpQg.png)
 
