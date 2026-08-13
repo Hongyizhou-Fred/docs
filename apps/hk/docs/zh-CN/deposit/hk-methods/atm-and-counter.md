@@ -43,7 +43,7 @@ sidebar: true
 - 柜台转账凭证示例： 
 ![](./images/ABNVbKjgsoXq6KxjXk4jOdNTpYe.png)
 
-1. 打开长桥 App，进入**资产 → 存入资金 → 选择币种 → ATM / 柜台转账**，上传汇款凭证
+1. 打开长桥 App，进入**资产 → 存入资金 → 选择币种 → ATM / 柜台转账**，上传汇款凭证 [点击此处办理资金入账](lb://page/mine/deposit)
 
 完成转账后请立即上传凭证，否则影响入金进度。
 
