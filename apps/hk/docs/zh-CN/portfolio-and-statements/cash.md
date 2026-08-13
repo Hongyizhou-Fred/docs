@@ -9,7 +9,7 @@ sidebar: true
 
 ## 页面入口
 
-底部导航「资产」→ 顶部切换「现金」标签。
+底部导航「资产」→ 顶部切换「现金」标签。 [点击此处进入资产首页](lb://page/fortune/home)
 
 ![](./images/MwxnbAZwQo8a0LxTOSsjXoJ0psg.png)
 
